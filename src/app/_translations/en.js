@@ -1,4 +1,7 @@
 export const enTranslation = {
+  "Home": "Home",
+  "Sample Page": "Sample Page",
+  "Products Page": "Products Page",
   sidebar: {
     menu: {
       sample: "Sample Menu",
@@ -11,7 +14,7 @@ export const enTranslation = {
     jumbo: "Jumbo",
     email: "Email",
     password: "Password",
-    rememberMe: "Remeber Me",
+    rememberMe: "Remember Me",
     signIn: "Sign In",
     content: "By signing in, you can avail full features of the Jumbo.",
     forgot1: "Forgot your password? Recover Now",
@@ -20,5 +23,15 @@ export const enTranslation = {
     other: "Or sign up with",
     loggedIn: "Login",
     account: "Don't have an account?",
+  },
+  widgets: {
+    title: {
+      welcomeEMA: "Welcome to EMA",
+      newConnections: "New Connections",
+      projectSummary: "Project Summary",
+    },
+    subheader: {
+      bitcoinPrice: "Bitcoin Price",
+    },
   },
 };

@@ -11,6 +11,7 @@ import { defaultLayoutConfig } from "@app/_config/layouts";
 export function StretchedLayout() {
   const location = useLocation();
   const menus = getMenus();
+  
   return (
     <JumboLayoutProvider layoutConfig={defaultLayoutConfig}>
       <JumboLayout
@@ -18,7 +19,7 @@ export function StretchedLayout() {
         footer={<Footer />}
         sidebar={<Sidebar menus={menus} />}
       >
-        {location.pathname === "/" && <Navigate to={"/"} />}
+        {location.pathname === "/" && <Navigate to="/" replace />}
         <Outlet />
         <Customizer />
         <CustomizerButton />
