@@ -1,59 +1,99 @@
 import React from "react";
 import { AuthContext } from "./AuthContext";
-import { eraseCookie, getCookie, setCookie } from "@jumbo/utilities/cookies";
-
-const iAuthService = async (email, password) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (email === "demo@example.com" && password === "zab#723") {
-        resolve({ token: "auth-user", email: email, password: password });
-      } else {
-        reject("Invalid email or password");
-      }
-    }, 3000);
-  });
-};
+import authService from "@app/_services/authService";
 
 export function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [user, setUser] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
-  const login = async ({ email, password }) => {
+  // Check authentication status on mount
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = authService.getToken();
+        if (token) {
+          const userData = await authService.getCurrentUser();
+          if (userData.success) {
+            setUser(userData.user);
+            setIsAuthenticated(true);
+          } else {
+            authService.clearAuthData();
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        authService.clearAuthData();
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const login = async (credentials) => {
     setLoading(true);
     try {
-      // Simulate a call to an authentication service
-      const response = await iAuthService(email, password); // Replace with your auth service
-      if (response.token) {
-        const stringify = {
-          token: response.token,
-          email: response.email,
-          password: response.password,
-        };
-        const authUserSr = encodeURIComponent(JSON.stringify(stringify));
-        setCookie("auth-user", authUserSr, 1);
+      const response = await authService.login(credentials);
+      if (response.success) {
+        setUser(response.user);
         setIsAuthenticated(true);
+        return { success: true };
       }
+      return { success: false, message: response.message };
     } catch (error) {
-      console.error("Login failed", error);
+      return { success: false, message: error.message };
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
-    eraseCookie("auth-user");
-    setIsAuthenticated(false);
+  const register = async (userData) => {
+    setLoading(true);
+    try {
+      const response = await authService.register(userData);
+      if (response.success) {
+        setUser(response.user);
+        setIsAuthenticated(true);
+        return { success: true };
+      }
+      return { success: false, message: response.message };
+    } catch (error) {
+      return { success: false, message: error.message };
+    } finally {
+      setLoading(false);
+    }
   };
 
-  React.useEffect(() => {
-    let authUserSr = getCookie("auth-user");
-    if (authUserSr) {
-      setIsAuthenticated(true);
+  const logout = async () => {
+    try {
+      await authService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+      setIsAuthenticated(false);
     }
-    setLoading(false);
-  }, []);
+  };
+
+  const updateUser = (updatedUser) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
+  };
+
+  const value = {
+    isAuthenticated,
+    user,
+    loading,
+    login,
+    register,
+    logout,
+    updateUser
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, loading, login, logout }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

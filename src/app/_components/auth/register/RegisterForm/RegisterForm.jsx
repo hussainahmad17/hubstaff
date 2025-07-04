@@ -11,18 +11,18 @@ import React from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useAuth } from "@app/_components/_core/AuthProvider/hooks";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 
-const LoginForm = () => {
-  const { t } = useTranslation();
-  const { login, loading } = useAuth();
+const RegisterForm = () => {
+  const { register, loading } = useAuth();
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = React.useState(false);
   const [error, setError] = React.useState("");
 
-  const handleLogin = async (data) => {
+  const handleRegister = async (data) => {
     setError("");
-    const result = await login({
+    const result = await register({
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       password: data.password
     });
@@ -30,7 +30,7 @@ const LoginForm = () => {
     if (result.success) {
       navigate("/");
     } else {
-      setError(result.message || "Login failed");
+      setError(result.message || "Registration failed");
     }
   };
 
@@ -41,7 +41,7 @@ const LoginForm = () => {
   return (
     <JumboForm
       validationSchema={validationSchema}
-      onSubmit={handleLogin}
+      onSubmit={handleRegister}
     >
       <Stack spacing={3} mb={3}>
         {error && (
@@ -50,16 +50,29 @@ const LoginForm = () => {
           </Alert>
         )}
         
+        <Stack direction="row" spacing={2}>
+          <JumboInput
+            fullWidth
+            fieldName="firstName"
+            label="First Name"
+          />
+          <JumboInput
+            fullWidth
+            fieldName="lastName"
+            label="Last Name"
+          />
+        </Stack>
+        
         <JumboInput
           fullWidth
           fieldName="email"
-          label={t("login.email")}
+          label="Email"
           type="email"
         />
         
         <JumboOutlinedInput
           fieldName="password"
-          label={t("login.password")}
+          label="Password"
           type={showPassword ? "text" : "password"}
           margin="none"
           endAdornment={
@@ -83,13 +96,13 @@ const LoginForm = () => {
           size="large"
           loading={loading}
         >
-          {t("login.loggedIn")}
+          Sign Up
         </LoadingButton>
         
         <Typography textAlign="center" variant="body1">
-          Don't have an account?{" "}
-          <Link underline="none" to="/auth/register">
-            Sign up
+          Already have an account?{" "}
+          <Link underline="none" to="/auth/login">
+            Sign in
           </Link>
         </Typography>
       </Stack>
@@ -97,4 +110,4 @@ const LoginForm = () => {
   );
 };
 
-export { LoginForm };
+export { RegisterForm };

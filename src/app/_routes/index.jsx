@@ -1,4 +1,5 @@
-import Login1 from "@app/pages/auth/login1";
+import Login from "@app/pages/auth/login";
+import Register from "@app/pages/auth/register";
 import { createBrowserRouter } from "react-router-dom";
 import SamplePage from "@app/pages";
 import { StretchedLayout } from "@app/_layouts/StretchedLayout";
@@ -16,20 +17,23 @@ const routes = [
         path: "/",
         element: <Page Component={SamplePage} hoc={withAuth} />,
       },
-        {
+      {
         path: "/dashboard/products",
         element: <Page Component={ProductsPage} hoc={withAuth} />,
       },
     ],
   },
-
   {
     path: "/auth",
     element: <SoloLayout />,
     children: [
       {
-        path: "login-1",
-        element: <Login1 />,
+        path: "login",
+        element: <Login />,
+      },
+      {
+        path: "register",
+        element: <Register />,
       },
     ],
   },

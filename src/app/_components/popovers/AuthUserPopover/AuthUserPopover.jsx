@@ -14,7 +14,7 @@ import {
   ThemeProvider,
   Typography,
 } from "@mui/material";
-import { authUser } from "./data";
+import { useAuthUser } from "./data";
 import { JumboDdPopover } from "@jumbo/components/JumboDdPopover";
 import { useAuth } from "@app/_components/_core/AuthProvider/hooks";
 import { useNavigate } from "react-router-dom";
@@ -23,11 +23,12 @@ const AuthUserPopover = () => {
   const { theme } = useJumboTheme();
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const authUser = useAuthUser();
 
-  async function handleLogout() {
+  const handleLogout = async () => {
     await logout();
-    return navigate("/auth/login-1");
-  }
+    navigate("/auth/login");
+  };
 
   return (
     <ThemeProvider theme={theme}>
@@ -78,11 +79,7 @@ const AuthUserPopover = () => {
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <RepeatOutlinedIcon />
               </ListItemIcon>
-              <ListItemText
-                // onClick={() => navigate('/samples/content-layout')}
-                primary="Switch User"
-                sx={{ my: 0 }}
-              />
+              <ListItemText primary="Switch User" sx={{ my: 0 }} />
             </ListItemButton>
             <ListItemButton onClick={handleLogout}>
               <ListItemIcon sx={{ minWidth: 36 }}>
